@@ -26,24 +26,46 @@ The repo mirrors the exact folder structure on the Mac so you always know where 
 ```
 M5-MacBookPro-dotfiles/         Mac location
 │
-├── 📁 home/                    → ~/
-│   ├── 📄 .zshrc               → ~/.zshrc
-│   ├── 📄 Brewfile             → ~/Brewfile
-│   ├── 📄 Updater.sh           → ~/Updater.sh
-│   └── 📄 superbrew.sh         → ~/superbrew.sh
+├── 📁 home/                                           → ~/
+│   ├── 📄 .zshrc                                      → ~/.zshrc
+│   ├── 📄 .p10k.zsh                                   → ~/.p10k.zsh
+│   ├── 📄 .gitconfig                                  → ~/.gitconfig
+│   ├── 📄 Brewfile                                    → ~/Brewfile
+│   ├── 📄 Updater.sh                                  → ~/Updater.sh
+│   ├── 📄 superbrew.sh                                → ~/superbrew.sh
+│   │
+│   ├── 📁 .ssh/                                       → ~/.ssh/
+│   │   └── 📄 config                                  → ~/.ssh/config
+│   │
+│   ├── 📁 .claude/                                    → ~/.claude/
+│   │   └── 📄 settings.local.json                     → ~/.claude/settings.local.json
+│   │
+│   ├── 📁 .config/                                    → ~/.config/
+│   │   ├── 📁 bpytop/                                 → ~/.config/bpytop/
+│   │   │   └── 📄 bpytop.conf                         → ~/.config/bpytop/bpytop.conf
+│   │   └── 📁 zed/                                    → ~/.config/zed/
+│   │       └── 📄 settings.json                       → ~/.config/zed/settings.json
+│   │
+│   └── 📁 Library/                                    → ~/Library/
+│       └── 📁 Application Support/                    → ~/Library/Application Support/
+│           ├── 📁 Code/User/                           → ~/Library/Application Support/Code/User/
+│           │   ├── 📄 settings.json                   → VS Code settings
+│           │   └── 📄 keybindings.json                → VS Code keybindings
+│           └── 📁 iTerm2/DynamicProfiles/             → ~/Library/Application Support/iTerm2/DynamicProfiles/
+│               └── 📄 vscode-synced.json              → iTerm2 color profile
 │
-└── 📁 config/                  → ~/.config/
-    └── 📁 Dotfiles/            → ~/.config/Dotfiles/
-        ├── 📄 aliases.zsh      → ~/.config/Dotfiles/aliases.zsh
-        ├── 📄 path.zsh         → ~/.config/Dotfiles/path.zsh
-        ├── 📄 scripts.zsh      → ~/.config/Dotfiles/scripts.zsh
-        ├── 📄 .tmux.conf       → ~/.config/Dotfiles/.tmux.conf
-        ├── 📄 .vimrc           → ~/.config/Dotfiles/.vimrc
+└── 📁 config/                                         → ~/.config/
+    └── 📁 Dotfiles/                                   → ~/.config/Dotfiles/
+        ├── 📄 aliases.zsh                             → ~/.config/Dotfiles/aliases.zsh
+        ├── 📄 path.zsh                                → ~/.config/Dotfiles/path.zsh
+        ├── 📄 scripts.zsh                             → ~/.config/Dotfiles/scripts.zsh
+        ├── 📄 .tmux.conf                              → ~/.config/Dotfiles/.tmux.conf
+        ├── 📄 .vimrc                                  → ~/.config/Dotfiles/.vimrc
         │
-        └── 📁 OSX-Git/         → ~/.config/Dotfiles/OSX-Git/
-            ├── 📄 .gitconfig   → ~/.gitconfig
-            ├── 📄 .gitignore   → ~/.gitignore
-            ├── 📄 .gitattributes → ~/.gitattributes
+        └── 📁 OSX-Git/                               → ~/.config/Dotfiles/OSX-Git/
+            ├── 📄 .gitconfig                          → ~/.gitconfig
+            ├── 📄 .gitignore                          → ~/.gitignore
+            ├── 📄 .gitattributes                      → ~/.gitattributes
             └── 📄 git-bootstrap.sh
 ```
 
@@ -268,9 +290,40 @@ cd ~/GitHub/M5-MacBookPro-dotfiles
 
 # Home directory files (~/)
 cp home/.zshrc ~/.zshrc
+cp home/.p10k.zsh ~/.p10k.zsh
+cp home/.gitconfig ~/.gitconfig
 cp home/Brewfile ~/Brewfile
 cp home/Updater.sh ~/Updater.sh && chmod +x ~/Updater.sh
 cp home/superbrew.sh ~/superbrew.sh && chmod +x ~/superbrew.sh
+
+# SSH config
+mkdir -p ~/.ssh
+cp home/.ssh/config ~/.ssh/config
+chmod 600 ~/.ssh/config
+
+# Claude Code settings
+mkdir -p ~/.claude
+cp home/.claude/settings.local.json ~/.claude/settings.local.json
+
+# bpytop config
+mkdir -p ~/.config/bpytop
+cp home/.config/bpytop/bpytop.conf ~/.config/bpytop/bpytop.conf
+
+# Zed config
+mkdir -p ~/.config/zed
+cp home/.config/zed/settings.json ~/.config/zed/settings.json
+
+# VS Code settings
+mkdir -p ~/Library/Application\ Support/Code/User
+cp home/Library/Application\ Support/Code/User/settings.json \
+   ~/Library/Application\ Support/Code/User/settings.json
+cp home/Library/Application\ Support/Code/User/keybindings.json \
+   ~/Library/Application\ Support/Code/User/keybindings.json
+
+# iTerm2 color profile
+mkdir -p ~/Library/Application\ Support/iTerm2/DynamicProfiles
+cp "home/Library/Application Support/iTerm2/DynamicProfiles/vscode-synced.json" \
+   ~/Library/Application\ Support/iTerm2/DynamicProfiles/vscode-synced.json
 
 # Modular zsh config files (~/.config/Dotfiles/)
 mkdir -p ~/.config/Dotfiles
@@ -280,8 +333,7 @@ cp config/Dotfiles/scripts.zsh ~/.config/Dotfiles/
 cp config/Dotfiles/.tmux.conf ~/.config/Dotfiles/
 cp config/Dotfiles/.vimrc ~/.config/Dotfiles/
 
-# Git configuration (~/  )
-cp config/Dotfiles/OSX-Git/.gitconfig ~/.gitconfig
+# Git global ignore and attributes
 cp config/Dotfiles/OSX-Git/.gitignore ~/.gitignore
 cp config/Dotfiles/OSX-Git/.gitattributes ~/.gitattributes
 ```

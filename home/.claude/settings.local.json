@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew list *)",
+      "Read(//private/etc/**)",
+      "Bash(zsh --version)",
+      "Bash(rustc --version)",
+      "Bash(ls -la ~/.zshenv ~/.zprofile ~/.zshrc ~/.zlogin ~/.profile 2>/dev/null; echo \"---\"; ls -la /etc/zshenv /etc/zprofile /etc/zshrc /etc/zlogin 2>/dev/null)",
+      "Bash(chmod +x /Users/roberthood/Updater.sh)",
+      "Bash(zsh -n /Users/roberthood/Updater.sh)",
+      "Bash(xargs -I{} brew info {})",
+      "Bash(brew tap-info *)",
+      "Bash(grep -E \"^\\(snake|so|tetris\\)$\")",
+      "Bash(brew bundle *)",
+      "Bash(command -v python3)",
+      "Bash(command -v pip3)",
+      "Bash(pip3 --version)",
+      "Bash(brew info *)",
+      "Bash(brew --prefix ruby)",
+      "Bash(command -v gem)",
+      "Bash(gem --version)",
+      "Bash(ls /opt/homebrew/opt/ruby/)",
+      "Bash(find /opt/homebrew/opt/ruby -name \"gem\" 2>/dev/null)",
+      "Bash(brew desc *)",
+      "Bash(cp ~/.zshrc ~/M5-MacBookPro-dotfiles/)",
+      "Bash(cp ~/.config/Dotfiles/OSX-Git/.gitconfig ~/M5-MacBookPro-dotfiles/OSX-Git/)",
+      "Bash(git config *)",
+      "Bash(mkdir -p home)",
+      "Bash(mkdir -p config/Dotfiles/OSX-Git)",
+      "Bash(chmod +x ~/superbrew.sh)",
+      "Bash(chmod +x ~/Updater.sh)"
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "editor.fontSize": 18,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.mouseWheelZoom": true,
+  "editor.wordWrap": "on",
+  "files.autoGuessEncoding": true,
+  "chat.mcp.gallery.enabled": true,
+  "workbench.colorTheme": "Obsidian Dark",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.startupEditor": "none",
+  "vsicons.dontShowNewVersionMessage": true,
+  "editor.lineHeight": 0,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true,
+    "**/Library": true,
+    "**/.Trash": true,
+    "**/Google Drive": true,
+    "**/Dropbox": true,
+    "**/.cache": true,
+    "**/.npm": true,
+    "**/.cargo": true
+  },
+  "files.watcherExclude": {
+    "**/Library/**": true,
+    "**/.Trash/**": true,
+    "**/Google Drive/**": true,
+    "**/Dropbox/**": true,
+    "**/.git/objects/**": true,
+    "**/node_modules/**": true,
+    "**/.cargo/**": true,
+    "**/.npm/**": true
+  },
+  // Limit IntelliSense to only the files you're actively working on
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": "off"
+  },
+  // Reduce extension host CPU usage
+  "extensions.experimental.affinity": {},
+  // Stop VS Code scanning all git repos in the workspace
+  "git.autoRepositoryDetection": "openEditors",
+  // Only show git decorations for open files, not the whole tree
+  "git.decorations.enabled": true,
+  "scm.diffDecorations": "gutter",
+  // Reduce file tree update frequency
+  "files.autoSave": "onFocusChange",
+  // Disable telemetry to reduce background network + CPU activity
+  "telemetry.telemetryLevel": "off",
+  // Don't index all symbols across the whole workspace
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 10
+}
