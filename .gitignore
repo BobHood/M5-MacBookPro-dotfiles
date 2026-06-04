@@ -8,8 +8,5 @@
 # Vim session history (not a config file)
 .viminfo
 
-# Outdated scripts (superseded by Brewfile)
-.superbrew.sh
-
 # Git submodule tracking (not needed for this repo)
 .gitmodules
