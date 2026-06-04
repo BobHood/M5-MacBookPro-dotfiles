@@ -21,23 +21,29 @@
 
 ## 📁 Repository Structure
 
+The repo mirrors the exact folder structure on the Mac so you always know where each file lives and where to put it back.
+
 ```
-M5-MacBookPro-dotfiles/
+M5-MacBookPro-dotfiles/         Mac location
 │
-├── 📄 .zshrc                  — Main shell configuration
-├── 📄 aliases.zsh             — All shell aliases
-├── 📄 path.zsh                — PATH declarations
-├── 📄 scripts.zsh             — Custom shell functions
-├── 📄 Brewfile                — Homebrew package list
-├── 📄 Updater.sh              — Full system update script
-├── 📄 .tmux.conf              — Tmux configuration
-├── 📄 .vimrc                  — Vim configuration
+├── 📁 home/                    → ~/
+│   ├── 📄 .zshrc               → ~/.zshrc
+│   ├── 📄 Brewfile             → ~/Brewfile
+│   └── 📄 Updater.sh           → ~/Updater.sh
 │
-└── 📁 OSX-Git/
-    ├── 📄 .gitconfig          — Global Git configuration
-    ├── 📄 .gitignore          — Global Git ignore rules
-    ├── 📄 .gitattributes      — Git line ending rules
-    └── 📄 git-bootstrap.sh    — Fresh Git setup script
+└── 📁 config/                  → ~/.config/
+    └── 📁 Dotfiles/            → ~/.config/Dotfiles/
+        ├── 📄 aliases.zsh      → ~/.config/Dotfiles/aliases.zsh
+        ├── 📄 path.zsh         → ~/.config/Dotfiles/path.zsh
+        ├── 📄 scripts.zsh      → ~/.config/Dotfiles/scripts.zsh
+        ├── 📄 .tmux.conf       → ~/.config/Dotfiles/.tmux.conf
+        ├── 📄 .vimrc           → ~/.config/Dotfiles/.vimrc
+        │
+        └── 📁 OSX-Git/         → ~/.config/Dotfiles/OSX-Git/
+            ├── 📄 .gitconfig   → ~/.gitconfig
+            ├── 📄 .gitignore   → ~/.gitignore
+            ├── 📄 .gitattributes → ~/.gitattributes
+            └── 📄 git-bootstrap.sh
 ```
 
 ---
@@ -233,25 +239,23 @@ mkdir -p ~/GitHub && git clone https://github.com/BobHood/M5-MacBookPro-dotfiles
 ```bash
 cd ~/GitHub/M5-MacBookPro-dotfiles
 
-# Core shell files
-cp .zshrc ~/.zshrc
-cp .tmux.conf ~/.tmux.conf
-cp .vimrc ~/.vimrc
-cp Updater.sh ~/Updater.sh && chmod +x ~/Updater.sh
+# Home directory files (~/)
+cp home/.zshrc ~/.zshrc
+cp home/Brewfile ~/Brewfile
+cp home/Updater.sh ~/Updater.sh && chmod +x ~/Updater.sh
 
-# Modular zsh files
+# Modular zsh config files (~/.config/Dotfiles/)
 mkdir -p ~/.config/Dotfiles
-cp aliases.zsh ~/.config/Dotfiles/
-cp path.zsh ~/.config/Dotfiles/
-cp scripts.zsh ~/.config/Dotfiles/
+cp config/Dotfiles/aliases.zsh ~/.config/Dotfiles/
+cp config/Dotfiles/path.zsh ~/.config/Dotfiles/
+cp config/Dotfiles/scripts.zsh ~/.config/Dotfiles/
+cp config/Dotfiles/.tmux.conf ~/.config/Dotfiles/
+cp config/Dotfiles/.vimrc ~/.config/Dotfiles/
 
-# Git configuration
-cp OSX-Git/.gitconfig ~/.gitconfig
-cp OSX-Git/.gitignore ~/.gitignore
-cp OSX-Git/.gitattributes ~/.gitattributes
-
-# Brewfile
-cp Brewfile ~/Brewfile
+# Git configuration (~/  )
+cp config/Dotfiles/OSX-Git/.gitconfig ~/.gitconfig
+cp config/Dotfiles/OSX-Git/.gitignore ~/.gitignore
+cp config/Dotfiles/OSX-Git/.gitattributes ~/.gitattributes
 ```
 
 ### 5. Install all Homebrew packages
