@@ -1,0 +1,198 @@
+# Home Brew install of VIM
+brew "vim"
+# BPYTop is a terminal-based system resource monitor written in Python that provides a highly visual, real-time tracking interface for your computer's performance.
+brew "bpytop"
+# Aquarium animation in ASCII art
+brew "asciiquarium"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Claude Code Commands Manager
+brew "claude-cmd"
+# Console Matrix
+brew "cmatrix"
+# Modern, maintained replacement for ls
+brew "eza"
+# Like neofetch, but much faster because written mostly in C
+brew "fastfetch"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# Interact with Google Gemini AI models from the command-line
+brew "gemini-cli"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick-full"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Convert pixel information into colored ASCII art
+brew "libcaca"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
+# Powerful, clean, object-oriented scripting language (overrides macOS system Ruby 2.6)
+brew "ruby"
+# Fast and simple video downloader
+brew "lux"
+# Mac App Store command-line interface
+brew "mas"
+# Theme for zsh
+brew "powerlevel10k"
+# Generic syntax highlighter
+brew "pygments"
+# Python interface to Tcl/Tk
+brew "python-tk@3.14"
+# Safe, concurrent, practical language
+brew "rust"
+# Organize software neatly under a single directory tree (e.g. /usr/local)
+brew "stow"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
+# Color-based alternative to figlet (uses libcaca)
+brew "toilet"
+# CLI tool that moves files or folder to the trash
+brew "trash"
+# Command-line unarchiving tools supporting multiple formats
+brew "unar"
+# Internet file retriever
+brew "wget"
+# Blazing fast terminal file manager written in Rust, based on async I/O
+brew "yazi"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
+# OpenPencil is a free and open-source vector graphics editor for macOS, Windows, and Linux. and a replacement for Figma's desktop app
+cask "openpencil"
+# Password manager that keeps all passwords secure behind one password
+cask "1password"
+# Command-line interface for 1Password
+cask "1password-cli"
+# Free video downloader
+cask "4k-video-downloader"
+# AirPods companion app
+cask "airbuddy"
+# Private desktop AI chat application
+cask "anythingllm"
+# Application uninstaller
+cask "appcleaner"
+# Tool to flash OS images to SD cards & USB drives
+cask "balenaetcher"
+# 3D creation suite
+cask "blender"
+# E-books management software
+cask "calibre"
+# Anthropic's official Claude AI desktop app
+cask "claude"
+# Terminal-based AI coding assistant
+cask "claude-code"
+# Tool to show live information about the batteries in various devices
+cask "coconutbattery"
+# Voice and text chat software
+cask "discord"
+# Window peeking utility app
+cask "dockdoor"
+# App to build and share containerised applications and microservices
+cask "docker-desktop"
+# Sync DriveThruRPG libraries to compatible devices
+cask "drivethrurpg"
+# Change the behavior of the fn keys depending on the active application
+cask "fluor"
+# Free and open-source image editor
+cask "gimp"
+# Desktop client for GitHub repositories
+cask "github"
+# Game client
+cask "gog-galaxy"
+# Web browser
+cask "google-chrome"
+# Client for the Google Drive storage service
+cask "google-drive"
+# Utility to hide menu bar items
+cask "hiddenbar"
+# Free and open-source media player
+cask "iina"
+# Tool to optimise images to a smaller size
+cask "imageoptim"
+# Vector graphics editor
+cask "inkscape"
+# HTTP and GraphQL Client
+cask "insomnia"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+# Enable generative AI features in iTerm2
+cask "itermai"
+# Free and Open Source Video Editor
+cask "kdenlive"
+# Tool to prevent the system from going into sleep mode
+cask "keepingyouawake"
+# File archiver
+cask "keka"
+# End-to-end encryption software
+cask "keybase"
+# Slicer for Resin 3D printers
+cask "lycheeslicer"
+# Screenshot and screen recording tool
+cask "macshot"
+# Knowledge base that works on top of a local folder of plain text Markdown files
+cask "obsidian"
+# G-code generator for 3D printers
+cask "orcaslicer"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Video game digital distribution service
+cask "steam"
+# Messaging app with a focus on speed and security
+cask "telegram"
+# 3D printer and slicing GUI
+cask "ultimaker-cura"
+# Open-source code editor
+cask "visual-studio-code"
+# Multimedia player
+cask "vlc"
+# Binary releases of VS Code without MS branding/telemetry/licensing
+# Native desktop client for WhatsApp
+cask "whatsapp"
+# Multiplayer code editor
+cask "zed"
+# Video communication and virtual meeting platform
+cask "zoom"
+mas "1Password for Safari", id: 1569813296
+mas "Developer", id: 640199958
+mas "GarageBand", id: 682658836
+mas "iMovie", id: 408981434
+mas "Keynote", id: 409183694
+mas "Numbers", id: 409203825
+mas "Obsidian Web Clipper", id: 6720708363
+mas "OneTab", id: 1540160809
+mas "Pages", id: 409201541
+mas "PayPal Honey", id: 1472777122
+mas "PocketTube", id: 1533703891
+mas "RetailMeNot Codes & Cash Back", id: 1588381926
+mas "Turn Off the Lights for Safari", id: 1273998507
+mas "Xcode", id: 497799835
+vscode "anthropic.claude-code"
+vscode "bmalehorn.shell-syntax"
+vscode "davidanson.vscode-markdownlint"
+vscode "emmanuelbeziat.vscode-great-icons"
+vscode "esbenp.prettier-vscode"
+vscode "fosshaas.fontsize-shortcuts"
+vscode "foxundermoon.shell-format"
+vscode "hamza-aziane.obsidian-dark"
+vscode "jimeh.executable-on-save"
+vscode "mechatroner.rainbow-csv"
+vscode "ms-azuretools.vscode-containers"
+vscode "ms-vscode-remote.remote-containers"
+vscode "mushan.vscode-open-iterm2"
+vscode "sirwanafifi.obsidian-clipper"
+vscode "streetsidesoftware.code-spell-checker"
+vscode "tusaeff.vscode-iterm2-theme-sync"
+vscode "vscode-icons-team.vscode-icons"
+vscode "willasm.obsidian-md-vsc"
+vscode "yzhang.markdown-all-in-one"
