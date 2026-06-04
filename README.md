@@ -39,6 +39,7 @@ M5-MacBookPro-dotfiles/         Mac location
         ├── 📄 .tmux.conf       → ~/.config/Dotfiles/.tmux.conf
         ├── 📄 .vimrc           → ~/.config/Dotfiles/.vimrc
         │
+        ├── 📄 .superbrew.sh    → ~/.config/Dotfiles/.superbrew.sh
         └── 📁 OSX-Git/         → ~/.config/Dotfiles/OSX-Git/
             ├── 📄 .gitconfig   → ~/.gitconfig
             ├── 📄 .gitignore   → ~/.gitignore
@@ -192,6 +193,32 @@ A fully automated system update script that runs everything in the correct order
 
 ---
 
+### 🍺 `.superbrew.sh`
+**Location:** `~/.config/Dotfiles/.superbrew.sh`
+
+An interactive Homebrew audit script that shows you everything before making any changes. Run it anytime to get a full health check of your system:
+
+```sh
+~/.config/Dotfiles/.superbrew.sh
+```
+
+Checks performed — each one shows results and asks `[y/n]` before acting:
+
+| Step | Check |
+|------|-------|
+| 1 | Refresh Homebrew formula index |
+| 2 | Outdated formulae |
+| 3 | Outdated casks |
+| 4 | Auto-updating casks (greedy check) |
+| 5 | Packages installed but missing from Brewfile |
+| 6 | Packages in Brewfile but not installed |
+| 7 | Outdated Ruby gems |
+| 8 | Homebrew health check (`brew doctor`) |
+| 9 | Cleanup old versions |
+| 10 | Full summary of all installed formulae and casks |
+
+---
+
 ### 🖥 `.tmux.conf`
 **Location:** `~/.config/Dotfiles/.tmux.conf` → symlink to `~/.tmux.conf`
 
@@ -251,6 +278,7 @@ cp config/Dotfiles/path.zsh ~/.config/Dotfiles/
 cp config/Dotfiles/scripts.zsh ~/.config/Dotfiles/
 cp config/Dotfiles/.tmux.conf ~/.config/Dotfiles/
 cp config/Dotfiles/.vimrc ~/.config/Dotfiles/
+cp config/Dotfiles/.superbrew.sh ~/.config/Dotfiles/ && chmod +x ~/.config/Dotfiles/.superbrew.sh
 
 # Git configuration (~/  )
 cp config/Dotfiles/OSX-Git/.gitconfig ~/.gitconfig
