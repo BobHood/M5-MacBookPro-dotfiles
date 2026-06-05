@@ -31,26 +31,25 @@ echo ""
 echo "========================================="
 echo "  Upgrading Installed Formulae & Casks"
 echo "========================================="
-# Upgrades all installed formulae and casks to their latest versions
-brew upgrade
+# --greedy also upgrades casks that have built-in auto-update mechanisms,
+# ensuring everything gets updated regardless of how it manages itself
+brew upgrade --greedy
 
 echo ""
 echo "========================================="
-echo "  Reconciling Brewfile (bundle)"
+echo "  Verifying Brewfile Packages Are Present"
 echo "========================================="
-# Installs anything listed in the Brewfile that isn't already installed,
-# keeping this machine in sync with the Brewfile as the source of truth
-# brew bundle -v            #verbose mode
-brew bundle
-
-echo ""
-echo "========================================="
-echo "  Checking for Unlisted Installed Packages"
-echo "========================================="
-# Lists packages installed on this machine but not in the Brewfile.
-# Nothing is removed — this is informational only.
-# To actually remove them, run manually: brew bundle cleanup --force
-brew bundle cleanup || true
+# Checks that every package listed in the Brewfile is installed.
+# Does NOT install or downgrade anything — purely a presence check.
+# If anything is missing (e.g. accidentally removed), it will be reported.
+# To install any missing packages manually: brew bundle install
+if brew bundle check --verbose; then
+    echo "All Brewfile packages are present."
+else
+    echo ""
+    echo "  Some Brewfile packages are missing. Installing them now..."
+    brew bundle install
+fi
 
 echo ""
 echo "========================================="
@@ -70,9 +69,12 @@ echo ""
 echo "========================================="
 echo "  Updating Ruby Gems"
 echo "========================================="
-# Uses the Homebrew Ruby gem binary directly to avoid falling back to
-# the write-protected macOS system Ruby at /Library/Ruby/Gems/2.6.0
-/opt/homebrew/opt/ruby/bin/gem update
+# Ruby and its bundled gems are managed by Homebrew via `brew upgrade --greedy`
+# above. Running `gem update` separately causes a version conflict where
+# rdoc 7.2.0 gets reinstalled alongside Ruby's bundled rdoc 7.0.4, producing
+# constant redefinition warnings on every gem invocation. Homebrew is the
+# correct update mechanism for this Ruby installation.
+echo "Ruby is managed by Homebrew — gems updated via brew upgrade above."
 
 echo ""
 echo "========================================="
@@ -88,6 +90,17 @@ echo "========================================="
 # Checks for common Homebrew issues and suggests fixes
 # brew doctor -v            #verbose mode
 brew doctor
+
+echo ""
+echo "========================================="
+echo "  Regenerating Brewfile"
+echo "========================================="
+# Rebuilds ~/Brewfile from scratch to reflect the current installed state:
+# all formulae, casks, App Store apps, and VS Code extensions.
+# This ensures the Brewfile stays accurate after upgrades and any manual
+# installs/removals since the last run. --force overwrites the existing file.
+brew bundle dump --force --file="$HOME/Brewfile"
+echo "Brewfile updated at ~/Brewfile"
 
 echo ""
 echo "========================================="
