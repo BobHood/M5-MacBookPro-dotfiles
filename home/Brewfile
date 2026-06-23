@@ -40,6 +40,8 @@ brew "lux"
 brew "mas"
 # Theme for zsh
 brew "powerlevel10k"
+# Install and run Python applications in isolated environments
+brew "pipx"
 # Generic syntax highlighter
 brew "pygments"
 # Python interface to Tcl/Tk
