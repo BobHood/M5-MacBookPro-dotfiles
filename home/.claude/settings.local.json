@@ -28,7 +28,13 @@
       "Bash(mkdir -p home)",
       "Bash(mkdir -p config/Dotfiles/OSX-Git)",
       "Bash(chmod +x ~/superbrew.sh)",
-      "Bash(chmod +x ~/Updater.sh)"
+      "Bash(chmod +x ~/Updater.sh)",
+      "mcp__Read_and_Write_Apple_Notes__add_note",
+      "mcp__Read_and_Write_Apple_Notes__update_note_content",
+      "Bash(/opt/homebrew/opt/ruby/bin/gem list *)",
+      "Bash(git -C /Users/roberthood/GitHub/M5-MacBookPro-dotfiles status)",
+      "Bash(git -C /Users/roberthood/GitHub/M5-MacBookPro-dotfiles remote -v)",
+      "Bash(git -C /Users/roberthood/GitHub/M5-MacBookPro-dotfiles diff HEAD)"
     ]
   }
 }
