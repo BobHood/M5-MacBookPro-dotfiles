@@ -1,321 +1,380 @@
 #!/bin/zsh
 ########################################################################
-####                 .zsh Shell Alias Definitions                   ####
+####       .zsh Shell Alias Definitions — Unified/OS-aware          ####
 ########################################################################
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes.
-#
-# Alias types in use:
-#   Simple aliases   — replace long commands with short names
-#   Suffix aliases   — open specific file types with a designated app
-#   Global aliases   — usable anywhere in a command line (e.g. in pipes)
-#   Function aliases — inline functions that accept parameters
-#
-# This file lives at ~/.config/Dotfiles/aliases.zsh and is sourced
-# automatically by ~/.zshrc via the Dotfiles glob loader.
-#
-# To see all currently active aliases, run: alias
+# Requires system_checks.sh to have run first (UCD_OS, UCD_PKG, UCD_HAS_*).
+# Structure: portable aliases first, then a macOS-only block, then a
+# Linux-only block for the equivalents. To see all active aliases: alias
 
 ########################################################################
-####                 Change Directory Aliases                       ####
+####                 Change Directory Aliases (portable)            ####
 ########################################################################
-alias cd..='cd ../'                         # Go back 1 directory level (typo-safe)
-alias ..='cd ../'                           # Go back 1 directory level
-alias ...='cd ../../'                       # Go back 2 directory levels
-alias .3='cd ../../../'                     # Go back 3 directory levels
-alias .4='cd ../../../../'                  # Go back 4 directory levels
-alias .5='cd ../../../../../'               # Go back 5 directory levels
-alias .6='cd ../../../../../../'            # Go back 6 directory levels
-cd() { builtin cd "$@"; eza -lh; }          # Always list directory contents upon 'cd'
+alias cd..='cd ../'
+alias ..='cd ../'
+alias ...='cd ../../'
+alias .3='cd ../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../../'
+alias .6='cd ../../../../../../'
+if [[ "$UCD_HAS_EZA" == "1" ]]; then
+  cd() { builtin cd "$@"; eza -lh; }
+else
+  cd() { builtin cd "$@"; ls -lh; }
+fi
 
 ########################################################################
-####            Directory Listing Commands (ls => eza)             ####
+####       Directory Listing (eza if present, plain ls fallback)    ####
 ########################################################################
-# eza is the actively maintained fork of the abandoned exa project.
-# It is a drop-in replacement with identical flags and behavior.
-alias ls="eza"                              # Replace ls with eza
-alias ll="eza -lh"                          # Long list with header
-alias la="eza -lah"                         # Long list, all files (incl. hidden), with header
-alias tree="eza --tree"                     # Tree view (also accepts -T)
+if [[ "$UCD_HAS_EZA" == "1" ]]; then
+  alias ls="eza"
+  alias ll="eza -lh"
+  alias la="eza -lah"
+  alias tree="eza --tree"
+  alias lt="eza -lAGht"
+else
+  alias ll="ls -lh"
+  alias la="ls -lah"
+  # tree: leave as the real `tree` command if installed; don't alias over it
+  # with something broken when eza is absent.
+fi
 alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'' | less'
-                                            # lr: Full recursive directory listing
 
 ########################################################################
-####                Direct Directory Navigation                     ####
+####            Direct Directory Navigation (portable)              ####
 ########################################################################
-alias ~="cd ~"                              # Go to home directory
-alias drop="cd ~/Dropbox"                   # Jump to Dropbox directory
-alias dload="cd ~/Downloads"                # Jump to Downloads directory
-alias dt="cd ~/Desktop"                     # Jump to Desktop
-alias gdrive="cd ~/Google\ Drive"          # Jump to Google Drive (fixed space escaping)
-alias sshdir="cd ~/.ssh"                    # Jump to .ssh directory
+alias ~="cd ~"
+alias dload="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias sshdir="cd ~/.ssh"
 
 ########################################################################
-####                     Command Shortcuts                          ####
+####                Command Shortcuts (portable)                    ####
 ########################################################################
-alias cat='bat'                             # Replace cat with bat for syntax highlighting
-alias ccat='bat'                            # Drop-in replacement for colorize's ccat
-alias cless='bat --paging=always'           # Drop-in replacement for colorize's cless
-alias cp='cp -iv'                           # Interactive + verbose cp
-alias mv='mv -iv'                           # Interactive + verbose mv
-alias mkdir='mkdir -pv'                     # Create parent dirs as needed, verbose
-alias md="mkdir"                            # Short form of mkdir
-alias less='less -FSRXc'                    # Preferred less implementation
-alias f='open -a Finder ./'                 # Open current directory in Finder
-alias which='type -a'                       # Show all locations of an executable
-alias path='echo -e ${PATH//:/\\n}'         # Print each PATH entry on its own line
-alias fix_stty='stty sane'                  # Restore terminal settings if scrambled
-alias show_options='shopt'                  # Display all shell option settings
-alias cic='set completion-ignore-case On'   # Make tab-completion case-insensitive
-mcd()  { mkdir -p "$1" && cd "$1"; }        # Make a directory and cd into it
-trash() { command mv "$@" ~/.Trash; }       # Move file(s) to macOS Trash
-ql()   { qlmanage -p "$*" >& /dev/null; }  # Open file(s) in macOS Quick Look
-alias DT='tee ~/Desktop/terminalOut.txt'    # Tee terminal output to Desktop file
-alias cls=clear                             # Familiar clear alias
-alias h="history"                           # Short history command
-alias j="jobs"                              # Short jobs command
-alias grep='grep --color=auto'              # Colorized grep
-alias egrep='egrep --color=auto'            # Colorized egrep
-alias fgrep='fgrep --color=auto'            # Colorized fgrep
-alias -s {txt,md,yaml,yml}="code"          # Auto-open text/config files in VS Code
-alias pg="echo 'Pinging Google' && ping www.google.com"
-                                            # Quick connectivity check
-alias dirs='dirs -v | head -10'             # Show last 10 visited directories
-alias usage='du -h -d1'                     # Disk usage, one level deep
-alias runp="lsof -i"                        # Show processes using network ports
-alias mount='mount | column -t'            # Human-readable mount output
-alias sudo='sudo '                          # Allow aliases to work with sudo
+if [[ "$UCD_HAS_BAT" == "1" ]]; then
+  alias cat='bat'
+  alias ccat='bat'
+  alias cless='bat --paging=always'
+fi
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias mkdir='mkdir -pv'
+alias md="mkdir"
+alias less='less -FSRXc'
+alias which='type -a'
+alias path='echo -e ${PATH//:/\\n}'
+alias fix_stty='stty sane'
+alias cls=clear
+alias h="history"
+alias j="jobs"
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias dirs='dirs -v | head -10'
+alias usage='du -h -d1'
+alias runp="lsof -i"
+alias sudo='sudo '   # allow aliases to work after sudo
+command -v grunt > /dev/null && alias grunt="grunt --stack"
+mcd()  { mkdir -p "$1" && cd "$1"; }
 
 ########################################################################
-####                    Config Editing Aliases                      ####
+####  Same-name, cross-platform functions (identical behavior on     ####
+####  either OS, different implementation under the hood — this is   ####
+####  the pattern to extend when adding more unified aliases)        ####
 ########################################################################
-alias zshrc='code ~/.zshrc'                 # Edit .zshrc in VS Code
-alias zshconf='code ~/.zshrc'               # Alternate alias for .zshrc editing
-alias ohmyzsh='code ~/.oh-my-zsh'           # Edit oh-my-zsh directory in VS Code
-alias dotfiles='code ~/.config/Dotfiles'    # Open Dotfiles directory in VS Code
+
+# trash: move file(s) to the OS trash instead of permanently deleting
+trash() {
+  if [[ "$UCD_OS" == "macos" ]]; then
+    command mv "$@" ~/.Trash
+  elif command -v gio &>/dev/null; then
+    gio trash "$@"
+  else
+    # Freedesktop trash spec fallback — no gio available (minimal/headless box)
+    local trash_dir="$HOME/.local/share/Trash/files"
+    mkdir -p "$trash_dir"
+    command mv "$@" "$trash_dir"
+    echo "Moved to $trash_dir (no gio/trash-cli found — install trash-cli for full freedesktop trash support)"
+  fi
+}
+
+# ips: list all local IP addresses
+ips() {
+  if [[ "$UCD_OS" == "macos" ]]; then
+    ifconfig -a | grep -o 'inet6\? \(\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)\|[a-fA-F0-9:]\+\)' | sed -e 's/inet6* //'
+  else
+    ip -4 -o addr show scope global | awk '{print $4}'
+    ip -6 -o addr show scope global | awk '{print $4}'
+  fi
+}
+
+# openPorts: list listening ports
+openPorts() {
+  if [[ "$UCD_OS" == "macos" ]]; then
+    sudo lsof -i | grep LISTEN
+  else
+    sudo ss -tulnp
+  fi
+}
+
+# lsockU / lsockT: open UDP / TCP sockets only
+lsockU() {
+  if [[ "$UCD_OS" == "macos" ]]; then sudo /usr/sbin/lsof -nP | grep UDP
+  else sudo ss -u -a -n -p
+  fi
+}
+lsockT() {
+  if [[ "$UCD_OS" == "macos" ]]; then sudo /usr/sbin/lsof -nP | grep TCP
+  else sudo ss -t -a -n -p
+  fi
+}
+
+# lumos / nox: switch to light / dark mode
+lumos() {
+  if [[ "$UCD_OS" == "macos" ]] && command -v lux &>/dev/null; then
+    lux all light
+  elif command -v gsettings &>/dev/null; then
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+  else
+    echo "lumos: no supported light/dark switcher found (lux on macOS, gsettings/GNOME on Linux)" >&2; return 1
+  fi
+}
+nox() {
+  if [[ "$UCD_OS" == "macos" ]] && command -v lux &>/dev/null; then
+    lux all dark
+  elif command -v gsettings &>/dev/null; then
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+  else
+    echo "nox: no supported light/dark switcher found (lux on macOS, gsettings/GNOME on Linux)" >&2; return 1
+  fi
+}
+
+# showBlocked: show firewall-blocked rules
+showBlocked() {
+  if [[ "$UCD_OS" == "macos" ]]; then
+    sudo ipfw list 2>/dev/null || echo "showBlocked: ipfw not available on this macOS version (removed in modern macOS — check pfctl instead)" >&2
+  elif command -v ufw &>/dev/null; then
+    sudo ufw status verbose
+  else
+    sudo iptables -L -n
+  fi
+}
+
+# mount: -t column only useful with plain `mount` output format; portable
+alias mount='mount | column -t'
 
 ########################################################################
-####                     Session Management                         ####
+####          Config Editing Aliases (editor-presence-aware)        ####
 ########################################################################
-alias update="source ~/.zshrc"              # Re-source .zshrc to apply changes
-                                            # (For macOS software updates, see 'osupdate' below)
-alias osupdate='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; sudo gem update'
-                                            # Full system update: macOS + Homebrew + gems
+if command -v code &>/dev/null; then
+  alias zshrc='code ~/.zshrc'
+  alias zshconf='code ~/.zshrc'
+  alias ohmyzsh='code ~/.oh-my-zsh'
+  alias dotfiles='code ~/.config/Dotfiles'
+  alias c="code ."
+else
+  alias zshrc="${EDITOR:-nano} ~/.zshrc"
+  alias zshconf="${EDITOR:-nano} ~/.zshrc"
+  alias ohmyzsh="${EDITOR:-nano} ~/.oh-my-zsh"
+  alias dotfiles="${EDITOR:-nano} ~/.config/Dotfiles"
+fi
+command -v zed &>/dev/null && alias ze="zed ."
+
+########################################################################
+####                Session Management (portable)                   ####
+########################################################################
+alias update="source ~/.zshrc"
+alias reload="source ~/.zshrc && echo 'Shell reloaded.'"
 alias topten="history | awk '{a[\$2]++}END{for(i in a){print a[i] \" \" i}}' | sort -rn | head"
-                                            # Top 10 most-used commands in history
 
 ########################################################################
-####                       Networking                               ####
+####                    Networking (portable core)                  ####
 ########################################################################
 alias myip='curl http://ipecho.net/plain; echo'
-                                            # Public-facing IP address (single definition)
-alias localip="ipconfig getifaddr en0"      # Local IP on primary interface (en0 for Wi-Fi)
-alias ips="ifconfig -a | grep -o 'inet6\? \(\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)\|[a-fA-F0-9:]\+\)' | sed -e 's/inet6* //'"
-                                            # All local IP addresses
-alias netCons='lsof -i'                     # Show all open TCP/IP sockets
-alias lsock='sudo /usr/sbin/lsof -i -P'    # Display open sockets
-alias lsockU='sudo /usr/sbin/lsof -nP | grep UDP'  # Open UDP sockets only
-alias lsockT='sudo /usr/sbin/lsof -nP | grep TCP'  # Open TCP sockets only
-alias ipInfo0='ipconfig getpacket en0'      # Connection info for en0
-alias ipInfo1='ipconfig getpacket en1'      # Connection info for en1
-alias openPorts='sudo lsof -i | grep LISTEN'        # All listening ports
-alias showBlocked='sudo ipfw list'          # Show ipfw rules including blocked IPs
-alias whois="whois -h whois-servers.net"    # Enhanced WHOIS lookups
-
-# DNS — three aliases, each with a distinct purpose:
-alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
-                                            # Full DNS flush (cache + resolver restart)
-alias flushDNS='dscacheutil -flushcache'    # Flush DNS cache only (no resolver restart)
-alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
-                                            # Alias flush (same as flushdns, without sudo)
+alias pubip="curl -s https://ipinfo.io/ip"
+alias netCons='lsof -i'
+alias whois="whois -h whois-servers.net"
 
 ########################################################################
-####                  Mac OS X Specific Commands                    ####
+####               Fallback Utility Aliases (portable)              ####
 ########################################################################
-alias showFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
-                                            # Show hidden files in Finder
-alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
-                                            # Hide hidden files in Finder
-alias showhidden="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-                                            # Show hidden files (bool form — same as showFiles)
-alias hidehidden="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-                                            # Hide hidden files (bool form — same as hideFiles)
-alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-                                            # Hide all icons from the Desktop
-alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-                                            # Show all icons on the Desktop
-alias deleteDSFiles="find . -name '.DS_Store' -type f -delete"
-                                            # Delete all .DS_Store files recursively from current directory
-alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
-                                            # List and delete all .DS_Store files (verbose form)
-alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-                                            # Remove duplicates from "Open With" menu
-alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-                                            # Alternate name for cleanupLS — same operation
-alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl"
-                                            # Empty Trash, external volumes, and old system logs
-alias ScreensaverDesktop='/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine -background'
-                                            # Run the screensaver as a desktop background
-alias mergepdf='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
-                                            # Merge multiple PDFs using the built-in Automator action
-alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
-                                            # Lock screen when going AFK
-alias spotoff="sudo mdutil -a -i off"       # Disable Spotlight indexing
-alias spoton="sudo mdutil -a -i on"         # Enable Spotlight indexing
-
-########################################################################
-####                  Clipboard (macOS Pasteboard)                  ####
-########################################################################
-alias -g 2clip='| pbcopy'                   # Pipe output to clipboard
-alias -g clip2='pbpaste |'                  # Paste clipboard into a pipeline
-
-########################################################################
-####                  Light / Dark Mode (lux)                       ####
-########################################################################
-alias lumos='lux all light'                 # Switch all to light mode
-alias nox='lux all dark'                    # Switch all to dark mode
-
-########################################################################
-####                  Fallback Utility Aliases                      ####
-########################################################################
-# macOS doesn't ship md5sum or sha1sum — use native equivalents
+# macOS doesn't ship md5sum/sha1sum/hd — these guards only fire where the
+# native GNU tool is actually missing, so they're already safe on Linux
+# (where md5sum/sha1sum/hd exist natively and these become silent no-ops).
 command -v md5sum  > /dev/null || alias md5sum="md5"
 command -v sha1sum > /dev/null || alias sha1sum="shasum"
-# macOS doesn't ship hd (hex dump) — fall back to hexdump
 command -v hd > /dev/null || alias hd="hexdump -C"
-# Use Grunt with stack traces if installed
-command -v grunt > /dev/null && alias grunt="grunt --stack"
 
 ########################################################################
-####                       Homebrew Commands                        ####
+####                    Git Aliases (portable)                      ####
 ########################################################################
-alias -g BrewMe="brew update && brew upgrade"
-                                            # Standard Homebrew update + upgrade
-alias -g BrewGreedy="brew update && brew upgrade --greedy --verbose"
-                                            # Force-upgrade all casks (incl. auto-updating ones)
-
-########################################################################
-####                         Git Aliases                            ####
-########################################################################
-function gc { git commit -m "$@"; }         # Commit with message
-alias gchm="git checkout master"            # Checkout master branch
-alias gs="git status"                       # Git status
-alias gpull="git pull"                      # Git pull
-alias gf="git fetch"                        # Fetch from default remote
-alias gfa="git fetch --all"                 # Fetch from all remotes
-alias gfo="git fetch origin"                # Fetch from origin specifically
-alias gpush="git push"                      # Git push
-alias gd="git diff"                         # Git diff
-alias ga="git add ."                        # Stage all changes
-alias gb="git branch"                       # List branches
-alias gbr="git branch remote"               # List remote branches
-alias gru="git remote update"               # Update all remotes
-alias gbn="git checkout -B"                 # Create and switch to new branch
-alias grf="git reflog"                      # Show reflog
-alias grh="git reset HEAD~"                 # Undo last commit (keep changes staged)
-alias gac="git add . && git commit -a -m"   # Stage all and commit
-alias gsu="git push --set-upstream origin"  # Push and set upstream (fixed: was 'git gpush')
+function gc { git commit -m "$@"; }
+alias gchm="git checkout master"
+alias gs="git status"
+alias gpull="git pull"
+alias gf="git fetch"
+alias gfa="git fetch --all"
+alias gfo="git fetch origin"
+alias gpush="git push"
+alias gd="git diff"
+alias ga="git add ."
+alias gb="git branch"
+alias gbr="git branch remote"
+alias gru="git remote update"
+alias gbn="git checkout -B"
+alias grf="git reflog"
+alias grh="git reset HEAD~"
+alias gac="git add . && git commit -a -m"
+alias gsu="git push --set-upstream origin"
 alias glog="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches"
-                                            # Pretty git log graph
 
 ########################################################################
-####                  Process Management                            ####
+####              Process Management (mostly portable)              ####
 ########################################################################
-alias memHogsTop='top -l 1 -o rsize | head -20'        # Top memory consumers (top)
-alias memHogsPs='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'  # Top memory (ps)
-alias cpu_hogs='ps wwaxr -o pid,stat,%cpu,time,command | head -10'        # Top CPU consumers
-alias topForever='top -l 9999999 -s 10 -o cpu'          # Continuous top (every 10s)
-alias ttop="top -R -F -s 10 -o rsize"                   # Resource-efficient top invocation
+# `top`'s flags differ meaningfully between BSD (macOS) and Linux `top` —
+# not worth reconciling, since `top` is interactive and rarely scripted.
+if [[ "$UCD_OS" == "macos" ]]; then
+  alias memHogsTop='top -l 1 -o rsize | head -20'
+  alias topForever='top -l 9999999 -s 10 -o cpu'
+  alias ttop="top -R -F -s 10 -o rsize"
+else
+  alias memHogsTop='top -b -n 1 -o %MEM | head -20'
+  alias topForever='top -b -d 10'
+  alias ttop="top"
+fi
+alias memHogsPs='ps wwaxm -o pid,stat,vsize,rss,time,command | head -10'
+alias cpu_hogs='ps wwaxr -o pid,stat,%cpu,time,command | head -10'
 
 ########################################################################
-####                       Docker Aliases                           ####
-####          (Uncomment if Docker Compose is in active use)        ####
+####                  Python Aliases (portable)                     ####
 ########################################################################
-# alias dockerstop='docker-compose stop'
-# alias dockerrestart='docker-compose restart'
-# alias dockerup='docker-compose up -d'
-# alias dockerrm='docker-compose rm --all'
-
-########################################################################
-####                        NPM Aliases                             ####
-####              (Uncomment if npm workflow is active)             ####
-########################################################################
-# alias npm-update="npx npm-check -u"
-# alias ni="npm install"
-# alias nrs="npm run start -s --"
-# alias nrb="npm run build -s --"
-# alias nrd="npm run dev -s --"
-# alias nrt="npm run test -s --"
-# alias nrtw="npm run test:watch -s --"
-# alias nrv="npm run validate -s --"
-# alias rmn="rm -rf node_modules"
-# alias flush-npm="rm -rf node_modules && npm i && echo NPM is done"
-
-########################################################################
-####                         Yarn Aliases                           ####
-####              (Uncomment if Yarn workflow is active)            ####
-########################################################################
-# alias yar="yarn run"
-# alias yab="yarn build"
-# alias yal="yarn lint:fix"
-# alias yac="yarn commit"
-# alias yas="yarn start"
-# alias yasb="yarn storybook:start"
-# alias yat="yarn test"
-# alias yatw="yarn test:watch"
-
-########################################################################
-####                        Other Aliases                           ####
-########################################################################
-
-########################################################################
-####                     Listing Extras (eza)                       ####
-########################################################################
-alias lt="eza -lAGht"                  # Long list sorted by time, newest first
-
-########################################################################
-####                         Editor Aliases                         ####
-########################################################################
-alias c="code ."                       # Open current directory in VS Code
-alias ze="zed ."                       # Open current directory in Zed
-
-########################################################################
-####                        Python Aliases                          ####
-########################################################################
-alias python="python3"                 # Always use Python 3
-alias pip="pip3"                       # Always use pip for Python 3
+alias python="python3"
+alias pip="pip3"
 alias venv="python3 -m venv .venv && source .venv/bin/activate"
-                                       # Create a virtual environment and activate it
 alias activate="source .venv/bin/activate"
-                                       # Activate an existing virtual environment
 
 ########################################################################
-####                        Docker Aliases                          ####
+####                  Docker Aliases (portable)                     ####
 ########################################################################
-alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
-                                       # List running containers in a clean table
-alias dpa='docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
-                                       # List all containers (including stopped)
-alias dclean="docker system prune -f"  # Remove all unused Docker resources
-alias dlogs="docker logs -f"           # Follow logs for a container
+if command -v docker &>/dev/null; then
+  alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+  alias dpa='docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+  alias dclean="docker system prune -f"
+  alias dlogs="docker logs -f"
+fi
 
 ########################################################################
-####                     macOS Utility Aliases                      ####
+####                  Date/Time Utilities (portable)                ####
 ########################################################################
-alias brewup="brew update && brew upgrade && brew cleanup -q"
-                                       # Quick Homebrew update, upgrade, and cleanup
-alias brewinfo="brew leaves | xargs brew desc --eval-all"
-                                       # Show descriptions for all top-level installed formulae
-alias ip="ipconfig getifaddr en0"      # Local IP address on primary Wi-Fi interface
-alias pubip="curl -s https://ipinfo.io/ip"
-                                       # Public-facing IP address
-alias sleepnow="pmset sleepnow"        # Put the Mac to sleep immediately
-alias week="date +%V"                  # Print the current ISO week number
+alias week="date +%V"
 alias timestamp="date -u +%Y-%m-%dT%H:%M:%SZ"
-                                       # Print current UTC timestamp in ISO 8601 format
 
 ########################################################################
-####                       Session Aliases                          ####
 ########################################################################
-alias reload="source ~/.zshrc && echo 'Shell reloaded.'"
-                                       # Re-source .zshrc to pick up any changes
+####                      macOS-ONLY BLOCK                          ####
+########################################################################
+########################################################################
+if [[ "$UCD_OS" == "macos" ]]; then
+
+  alias drop="cd ~/Dropbox"
+  alias gdrive="cd ~/Google\ Drive"
+  alias f='open -a Finder ./'
+  ql()   { qlmanage -p "$*" >& /dev/null; }
+  alias DT='tee ~/Desktop/terminalOut.txt'
+  alias -s {txt,md,yaml,yml}="code"
+  alias pg="echo 'Pinging Google' && ping www.google.com"
+
+  # --- Clipboard (macOS Pasteboard) ---
+  alias -g 2clip='| pbcopy'
+  alias -g clip2='pbpaste |'
+
+  # --- Networking (macOS-specific tools) ---
+  # ips, openPorts, lsockU, lsockT, lumos, nox, showBlocked, trash are now
+  # unified functions defined in the portable section above — not redefined
+  # here, so the same name works identically on either OS.
+  alias localip="ipconfig getifaddr en0"
+  alias lsock='sudo /usr/sbin/lsof -i -P'
+  alias ipInfo0='ipconfig getpacket en0'
+  alias ipInfo1='ipconfig getpacket en1'
+  alias ip="ipconfig getifaddr en0"
+
+  # --- DNS ---
+  alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+  alias flushDNS='dscacheutil -flushcache'
+  alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+
+  # --- Finder / Spotlight / System defaults ---
+  alias showFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+  alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+  alias showhidden="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+  alias hidehidden="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+  alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+  alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+  alias deleteDSFiles="find . -name '.DS_Store' -type f -delete"
+  alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+  alias cleanupLS="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+  alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+  alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl"
+  alias ScreensaverDesktop='/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine -background'
+  alias mergepdf='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
+  alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+  alias spotoff="sudo mdutil -a -i off"
+  alias spoton="sudo mdutil -a -i on"
+  alias sleepnow="pmset sleepnow"
+
+  # lumos/nox are unified functions (portable section above) — not redefined here.
+
+  # --- Homebrew ---
+  alias -g BrewMe="brew update && brew upgrade"
+  alias -g BrewGreedy="brew update && brew upgrade --greedy --verbose"
+  alias brewup="brew update && brew upgrade && brew cleanup -q"
+  alias brewinfo="brew leaves | xargs brew desc --eval-all"
+  alias osupdate='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; sudo gem update'
+
+fi
+
+########################################################################
+########################################################################
+####                      LINUX-ONLY BLOCK                          ####
+########################################################################
+########################################################################
+if [[ "$UCD_OS" == "linux" ]]; then
+
+  # --- Clipboard: xclip/xsel if present, else a clear error instead of a
+  # silent failure (headless boxes like macpro-llm have no clipboard at all,
+  # which is expected — this just makes that obvious if invoked). ---
+  if command -v xclip &>/dev/null; then
+    alias -g 2clip='| xclip -selection clipboard'
+    alias -g clip2='xclip -selection clipboard -o |'
+  elif command -v xsel &>/dev/null; then
+    alias -g 2clip='| xsel --clipboard --input'
+    alias -g clip2='xsel --clipboard --output |'
+  else
+    alias -g 2clip='| { echo "No clipboard tool installed (xclip/xsel). On headless boxes this is expected." >&2; cat; }'
+  fi
+
+  # --- Networking ---
+  alias localip="hostname -I | awk '{print \$1}'"
+  alias ip_addr="hostname -I"   # named ip_addr, not ip — `ip` is the real Linux networking command
+  command -v ss &>/dev/null && alias lsock="sudo ss -tulnp" || alias lsock="sudo lsof -i -P"
+
+  # --- DNS flush (systemd-resolved, the common case on Ubuntu 26.04) ---
+  if command -v resolvectl &>/dev/null; then
+    alias flushdns="sudo resolvectl flush-caches"
+    alias flush="sudo resolvectl flush-caches"
+  elif command -v systemd-resolve &>/dev/null; then
+    alias flushdns="sudo systemd-resolve --flush-caches"
+    alias flush="sudo systemd-resolve --flush-caches"
+  fi
+
+  # --- Power ---
+  command -v systemctl &>/dev/null && alias sleepnow="systemctl suspend"
+
+  # --- Package manager (apt) ---
+  if [[ "$UCD_PKG" == "apt" ]]; then
+    alias -g AptMe="sudo apt update && sudo apt upgrade"
+    alias -g AptGreedy="sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y"
+    alias aptup="sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y"
+    alias aptinfo="apt list --installed"
+  fi
+
+fi

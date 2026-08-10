@@ -29,6 +29,16 @@
   builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 
 ########################################################################
+####     SystemChecks — Unified CommandLineInterface Dotfiles       ####
+####  Must load early — everything below branches on UCD_* flags.   ####
+########################################################################
+# Detects OS, package manager, shell, SSH context, and tool availability once,
+# here, instead of every later block re-testing `command -v`/`[[ -f ]]` itself.
+# Shared with .bashrc — see ~/.config/Dotfiles/system_checks.sh.
+[[ -f "$HOME/.config/Dotfiles/system_checks.sh" ]] && \
+  source "$HOME/.config/Dotfiles/system_checks.sh"
+
+########################################################################
 ####                   Powerlevel10k Instant Prompt                 ####
 ####    Must stay near the top — before any output or interaction   ####
 ########################################################################
@@ -48,7 +58,8 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 
 # ZSH_THEME is intentionally blank — Powerlevel10k is loaded manually
-# below via its Homebrew path, which is the correct method for p10k.
+# below, via an OS-aware block (Homebrew path on Mac, oh-my-zsh custom-themes
+# path on Linux) — see "Powerlevel10k Theme" section near the bottom.
 ZSH_THEME=""
 
 # Auto-update weekly without prompting
@@ -177,11 +188,28 @@ source "$ZSH/oh-my-zsh.sh"
 ####        Homebrew: Syntax Highlighting & Autosuggestions         ####
 ####              (Must be sourced AFTER oh-my-zsh.sh)              ####
 ########################################################################
-[[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# UCD_BREW_PREFIX is empty on non-Homebrew boxes, so these paths simply won't
+# exist there and the [[ -f ]] guard skips to the next candidate — no need to
+# branch on UCD_OS explicitly here.
+for _SH_PATH in \
+  "${UCD_BREW_PREFIX:-/opt/homebrew}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  "${UCD_ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+do
+  [[ -f "$_SH_PATH" ]] && source "$_SH_PATH" && break
+done
+unset _SH_PATH
 
-[[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && \
-  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+for _AS_PATH in \
+  "${UCD_BREW_PREFIX:-/opt/homebrew}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  "${UCD_ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+do
+  [[ -f "$_AS_PATH" ]] && source "$_AS_PATH" && break
+done
+unset _AS_PATH
+# On Debian/Ubuntu (UCD_PKG=apt): sudo apt install zsh-syntax-highlighting zsh-autosuggestions
+# (installs to the /usr/share paths above). Missing on both platforms = silent no-op.
 
 ########################################################################
 ####   zsh-lux — Guarded Load (safe if plugin is not installed)    ####
@@ -210,7 +238,7 @@ export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$HOME/.local/bin:$PATH"
 # Note: zoxide remaps `cd` below — the cd() override in aliases.zsh is
 # intentionally superseded by zoxide. That is expected behaviour.
 
-for FILE in "$HOME/.config/Dotfiles/"*.zsh; do
+for FILE in "$HOME/.config/Dotfiles/"*.zsh(N); do
   [[ -r "$FILE" ]] && source "$FILE"
 done
 unset FILE
@@ -245,8 +273,9 @@ export MANPATH="/usr/local/man:$MANPATH"     # Man page search path
 export LANG="en_US.UTF-8"                    # Language environment
 export LC_ALL="en_US.UTF-8"                  # Locale — all categories
 
-# Preferred editor: nano over SSH, VS Code locally
-if [[ -n $SSH_CONNECTION ]]; then
+# Preferred editor: nano over SSH or on any Linux box (headless boxes like
+# macpro-llm have no GUI editor to shell out to); VS Code locally on Mac.
+if [[ "$UCD_IS_SSH" == "1" ]] || [[ "$UCD_OS" == "linux" ]] || ! command -v code &>/dev/null; then
   export EDITOR='nano'
   export VISUAL='nano'
 else
@@ -289,13 +318,6 @@ export FZF_CTRL_T_OPTS="--preview 'bat --color=always {}' --preview-window=right
 export FZF_ALT_C_OPTS="--preview 'eza -lAh {}'"
 
 ########################################################################
-####               zoxide — Smarter cd with Frecency                ####
-########################################################################
-# `cd <partial>` jumps to the highest-frecency match
-# `cdi` launches an interactive picker
-eval "$(zoxide init zsh --cmd cd)"
-
-########################################################################
 ####                   1Password Shell Completion                   ####
 ########################################################################
 # Wrapped in a guard so compdef doesn't error if compinit didn't finish
@@ -329,9 +351,26 @@ fi
 ########################################################################
 ####                     Powerlevel10k Theme                        ####
 ########################################################################
-# Sourced from Homebrew install path — correct for Apple Silicon Macs.
-source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+# Homebrew path on Apple Silicon Macs; oh-my-zsh custom-themes path (how it's
+# installed on Linux boxes, e.g. macpro-llm) as fallback.
+if [[ -f "${UCD_BREW_PREFIX:-/opt/homebrew}/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "${UCD_BREW_PREFIX:-/opt/homebrew}/share/powerlevel10k/powerlevel10k.zsh-theme"
+elif [[ -f "${UCD_ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  source "${UCD_ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme"
+fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+########################################################################
+####               zoxide — Smarter cd with Frecency                ####
+########################################################################
+# `cd <partial>` jumps to the highest-frecency match
+# `cdi` launches an interactive picker
+# Must be initialized last so it correctly overrides any cd definitions
+# Guarded: not every box has zoxide installed (e.g. macpro-llm doesn't yet) —
+# without this guard, `cd` itself would be undefined on those boxes.
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh --cmd cd)"
+fi
 
 ########################################################################
 ####                Amazon Q Post-Block                             ####
